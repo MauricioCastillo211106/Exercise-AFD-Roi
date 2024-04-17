@@ -1,5 +1,1 @@
-acaa
- acab
- abcab
- ab
- acb
+abcab

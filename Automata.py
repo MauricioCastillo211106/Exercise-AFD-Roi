@@ -1,10 +1,8 @@
 class Automata:
     def __init__(self):
-        # Define los estados posibles del AFD
-        self.estadosPosibles = ["q0 " "q1" "q2" "q3" "q4" "q5"]
-
+        self.estadosPosibles = ["q0", "q1", "q2", "q3", "q4", "q5"]
         self.estadoInicial = "q0"
-        self.estadoFinal = ["q2","q5"]
+        self.estadoFinal = ["q2", "q5"]
         self.transiciones = {
             ("q0", "a"): "q1",
             ("q0", "b"): "q3",
@@ -24,25 +22,51 @@ class Automata:
             ("q5", "a"): "q4",
             ("q5", "b"): "q3",
             ("q5", "c"): "q3",
-            
-            
         }
 
-    def Automata(self, a):
-        Actual = self.estadoInicial
+    def Automata(self, cadena):
+        actual = self.estadoInicial
+        ruta = [actual]
+        cadena_procesada = ""  # Inicializamos la cadena procesada
 
-        for symbol in a:
-            Actual = self.transiciones.get((Actual, symbol))
-            print(Actual)
-            print(symbol)
-            if Actual is None:
-                return False
+        for simbolo in cadena:
+            siguiente = self.transiciones.get((actual, simbolo))
+            if siguiente:
+                ruta.append(siguiente)  # Añade el siguiente estado a la ruta
+                actual = siguiente
+                cadena_procesada += simbolo  # Agregamos el símbolo a la cadena procesada
+            else:
+                # Si no hay transición definida, terminamos la ejecución y devolvemos una ruta vacía
+                return [], cadena_procesada, False
 
-        if Actual in self.estadoFinal:
-            print(self.estadoFinal)
-            return True
-        else:
-            return False
+        return ruta, cadena_procesada, actual in self.estadoFinal  # Retorna la ruta y si el estado final es aceptable
 
+    def procesar_cadena(self, cadena):
+        actual = self.estadoInicial
+        ruta = [actual]
+        cadena_procesada = ""  # Inicializamos la cadena procesada
+
+        for simbolo in cadena:
+            siguiente = self.transiciones.get((actual, simbolo))
+            if siguiente:
+                ruta.append(siguiente)  # Añade el siguiente estado a la ruta
+                actual = siguiente
+                cadena_procesada += simbolo  # Agregamos el símbolo a la cadena procesada
+            else:
+                # Si no hay transición, continúa con el mismo estado y agrega el símbolo a la cadena procesada
+                cadena_procesada += simbolo
+
+        # Comprueba si el estado final es aceptable
+        estado_aceptable = actual in self.estadoFinal
+        return ruta, cadena_procesada, estado_aceptable  # Retorna la ruta, cadena procesada y si el estado final es aceptable
+
+    def obtener_ruta_como_cadena(self, ruta):
+        ruta_cadena = []
+        for i in range(len(ruta) - 1):
+            estado_actual = ruta[i]
+            estado_siguiente = ruta[i + 1]
+            transicion = [key[1] for key, value in self.transiciones.items() if value == estado_siguiente and key[0] == estado_actual][0]
+            ruta_cadena.append(f"{estado_actual}-{transicion}")
+        return ",".join(ruta_cadena)
 
 automata = Automata()
